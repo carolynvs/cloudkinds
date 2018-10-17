@@ -5,19 +5,7 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - cloudinjector.k8s.io
+  - cloudkinds.k8s.io
   resources:
   - cloudresources
   verbs:

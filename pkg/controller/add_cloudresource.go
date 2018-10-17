@@ -17,10 +17,10 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/carolynvs/cloud-injector/pkg/controller/cloudresource"
+	"github.com/carolynvs/k8s-cloud-kinds/pkg/controller/cloudkinds"
 )
 
 func init() {
 	// AddToManagerFuncs is a list of functions to create controllers and add them to a manager.
-	AddToManagerFuncs = append(AddToManagerFuncs, cloudresource.Add)
+	AddToManagerFuncs = append(AddToManagerFuncs, cloudkinds.Add)
 }

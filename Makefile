@@ -10,7 +10,7 @@ test: generate fmt vet manifests
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o bin/manager github.com/carolynvs/cloud-injector/cmd/manager
+	go build -o bin/manager github.com/carolynvs/k8s-cloud-kinds/cmd/manager
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet

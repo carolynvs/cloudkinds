@@ -14,5 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package cloudinjector contains cloudinjector API versions
-package cloudinjector
+// Package cloudkinds contains cloudkinds API versions
+package cloudkinds
