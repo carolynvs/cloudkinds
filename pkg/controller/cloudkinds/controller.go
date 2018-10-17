@@ -88,11 +88,69 @@ type ReconcileCloudKind struct {
 // Automatically generate RBAC rules to allow the Controller to read and write Deployments
 // +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=cloudresources,verbs=get;list;watch;create;update;patch;delete
 func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	fmt.Printf("farts are funny: %#v\n", request)
+	// Resolve a provider for this kind
+	providers := &v1alpha1.ProviderList{}
+	err := r.List(context.Background(), &client.ListOptions{}, providers)
+
+	var provider *v1alpha1.Provider
+	for _, p := range providers.Items {
+		for _, k := range p.Spec.Kinds {
+			if k == request.Kind {
+				provider = &p
+			}
+		}
+	}
+
+	if provider == nil {
+		// We can't reconcile this _yet_ because there isn't a provider registered  - requeue the request with a bit of a buffer.
+		return reconcile.Result{Requeue: true, RequeueAfter: 30 * time.Second}, fmt.Errorf("no provider registered for kind: %s", request.Kind)
+	}
 
 	obj := NewCloudKind(request.GroupVersionKind)
-	err := r.Get(context.Background(), request.NamespacedName, obj)
+	err = r.Get(context.Background(), request.NamespacedName, obj)
+	if err != nil {
+		if apierrors.IsNotFound(err) {
+			return reconcile.Result{}, nil
+		}
 
-	fmt.Printf("%#v\n", obj)
-	return reconcile.Result{}, err
+		// Error reading the object - requeue the request.
+		return reconcile.Result{Requeue: true}, err
+	}
+
+	apiVersion, kind := request.ToAPIVersionAndKind()
+	evt := v1alpha1.ResourceEvent{
+		Action: v1alpha1.ResourceCreated, // TODO: Base the action on the status of the resource
+		Resource: v1alpha1.ResourceReference{
+			TypeMeta:  v1.TypeMeta{APIVersion: apiVersion, Kind: kind},
+			Namespace: request.NamespacedName.Namespace,
+			Name:      request.NamespacedName.Name,
+		},
+	}
+	bodyJson, err := json.Marshal(evt)
+	if err != nil {
+		return reconcile.Result{Requeue: true}, err
+	}
+	body := bytes.NewReader(bodyJson)
+
+	response, err := http.DefaultClient.Post(provider.Spec.WebHook, "application/json", body)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	defer response.Body.Close()
+	result, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		result = []byte("could not read response body")
+	}
+
+	if response.StatusCode != http.StatusOK {
+		err = fmt.Errorf("provider failed: %v %v %s", response.StatusCode, provider.Spec.WebHook, string(result))
+		fmt.Println(err)
+		return reconcile.Result{}, err
+	} else {
+		fmt.Printf("%#v\n", obj)
+		fmt.Println(string(result))
+	}
+
+	return reconcile.Result{}, nil
 }
