@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/carolynvs/k8s-cloud-kinds/pkg/controller/cloudkinds"
+	"github.com/carolynvs/cloudkinds/pkg/controller/cloudkinds"
 )
 
 func init() {

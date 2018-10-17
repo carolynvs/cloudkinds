@@ -21,7 +21,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/carolynvs/k8s-cloud-kinds/pkg/apis/cloudkinds/v1alpha1"
+	"github.com/carolynvs/cloudkinds/pkg/apis/cloudkinds/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"

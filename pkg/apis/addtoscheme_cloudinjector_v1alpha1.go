@@ -17,7 +17,7 @@ limitations under the License.
 package apis
 
 import (
-	"github.com/carolynvs/k8s-cloud-kinds/pkg/apis/cloudkinds/v1alpha1"
+	"github.com/carolynvs/cloudkinds/pkg/apis/cloudkinds/v1alpha1"
 )
 
 func init() {
