@@ -20,16 +20,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// TODO: Remove this and create the CRDs on the fly
-
-// CloudResourceSpec defines the desired state of CloudResource
-type CloudResourceSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+// ProviderSpec defines the desired state of Provider
+type ProviderSpec struct {
+	// WebHook is the URL to call when a resource should be acted upon by the provider.
+	WebHook string `json:"webhook"`
 }
 
-// CloudResourceStatus defines the observed state of CloudResource
-type CloudResourceStatus struct {
+// ProviderStatus defines the observed state of Provider
+type ProviderStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -37,25 +35,25 @@ type CloudResourceStatus struct {
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// CloudResource is the Schema for the cloudresources API
+// Provider is the Schema for the providers API
 // +k8s:openapi-gen=true
-type CloudResource struct {
+type Provider struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   CloudResourceSpec   `json:"spec,omitempty"`
-	Status CloudResourceStatus `json:"status,omitempty"`
+	Spec   ProviderSpec   `json:"spec,omitempty"`
+	Status ProviderStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// CloudResourceList contains a list of CloudResource
-type CloudResourceList struct {
+// ProviderList contains a list of Provider
+type ProviderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []CloudResource `json:"items"`
+	Items           []Provider `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&CloudResource{}, &CloudResourceList{})
+	SchemeBuilder.Register(&Provider{}, &ProviderList{})
 }

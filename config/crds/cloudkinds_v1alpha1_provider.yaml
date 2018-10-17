@@ -4,12 +4,12 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: cloudresources.cloudinjector.k8s.io
+  name: providers.cloudkinds.k8s.io
 spec:
-  group: cloudinjector.k8s.io
+  group: cloudkinds.k8s.io
   names:
-    kind: CloudResource
-    plural: cloudresources
+    kind: Provider
+    plural: providers
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -21,6 +21,11 @@ spec:
         metadata:
           type: object
         spec:
+          properties:
+            webhook:
+              type: string
+          required:
+          - webhook
           type: object
         status:
           type: object
