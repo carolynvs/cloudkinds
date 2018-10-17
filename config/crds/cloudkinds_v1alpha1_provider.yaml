@@ -22,10 +22,15 @@ spec:
           type: object
         spec:
           properties:
+            kinds:
+              items:
+                type: string
+              type: array
             webhook:
               type: string
           required:
           - webhook
+          - kinds
           type: object
         status:
           type: object

@@ -24,6 +24,12 @@ import (
 type ProviderSpec struct {
 	// WebHook is the URL to call when a resource should be acted upon by the provider.
 	WebHook string `json:"webhook"`
+
+	// SupportedKinds for the provider.
+	// Example:
+	// - MySQLDatabase
+	// - PostgreSQLServer
+	Kinds []string `json:"kinds"`
 }
 
 // ProviderStatus defines the observed state of Provider

@@ -6,4 +6,6 @@ metadata:
   name: provider-sample
 spec:
   # Add fields here
-  webhook: http://exaple.com
+  webhook: https://example.com
+  kinds:
+    - CloudResource
