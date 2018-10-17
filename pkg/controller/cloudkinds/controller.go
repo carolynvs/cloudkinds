@@ -17,8 +17,8 @@ limitations under the License.
 package cloudkinds
 
 import (
+	"context"
 	"fmt"
-
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"github.com/carolynvs/cloudkinds/pkg/apis/cloudkinds/v1alpha1"
@@ -81,5 +81,10 @@ type ReconcileCloudKind struct {
 // +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=cloudresources,verbs=get;list;watch;create;update;patch;delete
 func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	fmt.Printf("farts are funny: %#v\n", request)
-	return reconcile.Result{}, nil
+
+	obj := NewCloudKind(request.GroupVersionKind)
+	err := r.Get(context.Background(), request.NamespacedName, obj)
+
+	fmt.Printf("%#v\n", obj)
+	return reconcile.Result{}, err
 }

@@ -17,6 +17,7 @@ limitations under the License.
 package reconcile
 
 import (
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"time"
 
 	"k8s.io/apimachinery/pkg/types"
@@ -36,7 +37,8 @@ type Result struct {
 // any specific Event or the object contents itself.
 type Request struct {
 	// NamespacedName is the name and namespace of the object to reconcile.
-	types.NamespacedName
+	NamespacedName types.NamespacedName
+	schema.GroupVersionKind
 }
 
 /*

@@ -42,7 +42,7 @@ func (e *EnqueueRequestForObject) Create(evt event.CreateEvent, q workqueue.Rate
 	q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
 		Name:      evt.Meta.GetName(),
 		Namespace: evt.Meta.GetNamespace(),
-	}})
+	}, GroupVersionKind: evt.Object.GetObjectKind().GroupVersionKind()})
 }
 
 // Update implements EventHandler
@@ -51,7 +51,7 @@ func (e *EnqueueRequestForObject) Update(evt event.UpdateEvent, q workqueue.Rate
 		q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
 			Name:      evt.MetaOld.GetName(),
 			Namespace: evt.MetaOld.GetNamespace(),
-		}})
+		}, GroupVersionKind: evt.ObjectNew.GetObjectKind().GroupVersionKind()})
 	} else {
 		enqueueLog.Error(nil, "UpdateEvent received with no old metadata", "UpdateEvent", evt)
 	}
@@ -60,7 +60,7 @@ func (e *EnqueueRequestForObject) Update(evt event.UpdateEvent, q workqueue.Rate
 		q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
 			Name:      evt.MetaNew.GetName(),
 			Namespace: evt.MetaNew.GetNamespace(),
-		}})
+		}, GroupVersionKind: evt.ObjectNew.GetObjectKind().GroupVersionKind()})
 	} else {
 		enqueueLog.Error(nil, "UpdateEvent received with no new metadata", "UpdateEvent", evt)
 	}
@@ -75,7 +75,7 @@ func (e *EnqueueRequestForObject) Delete(evt event.DeleteEvent, q workqueue.Rate
 	q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
 		Name:      evt.Meta.GetName(),
 		Namespace: evt.Meta.GetNamespace(),
-	}})
+	}, GroupVersionKind: evt.Object.GetObjectKind().GroupVersionKind()})
 }
 
 // Generic implements EventHandler
@@ -87,5 +87,5 @@ func (e *EnqueueRequestForObject) Generic(evt event.GenericEvent, q workqueue.Ra
 	q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
 		Name:      evt.Meta.GetName(),
 		Namespace: evt.Meta.GetNamespace(),
-	}})
+	}, GroupVersionKind: evt.Object.GetObjectKind().GroupVersionKind()})
 }

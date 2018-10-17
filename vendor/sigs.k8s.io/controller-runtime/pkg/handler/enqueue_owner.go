@@ -129,7 +129,7 @@ func (e *EnqueueRequestForOwner) getOwnerReconcileRequest(object metav1.Object) 
 			result = append(result, reconcile.Request{NamespacedName: types.NamespacedName{
 				Namespace: object.GetNamespace(),
 				Name:      ref.Name,
-			}})
+			}, GroupVersionKind: e.OwnerType.GetObjectKind().GroupVersionKind()})
 		}
 	}
 
