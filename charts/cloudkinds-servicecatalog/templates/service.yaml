@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cloudkinds-servicecatalog.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "cloudkinds-servicecatalog.name" . }}
+    helm.sh/chart: {{ include "cloudkinds-servicecatalog.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "cloudkinds-servicecatalog.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

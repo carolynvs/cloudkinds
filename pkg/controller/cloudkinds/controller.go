@@ -86,11 +86,13 @@ type ReconcileCloudKind struct {
 // TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
 // a Deployment as an example
 // Automatically generate RBAC rules to allow the Controller to read and write Deployments
-// +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=cloudresources,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=providers,verbs=get;list;watch
+// +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=cloudresources,verbs=get;list;watch;update;patch
 func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	fmt.Println("farts are funny")
 	// Resolve a provider for this kind
 	providers := &v1alpha1.ProviderList{}
-	err := r.List(context.Background(), &client.ListOptions{}, providers)
+	err := r.List(context.Background(), &client.ListOptions{Namespace: request.NamespacedName.Namespace}, providers)
 
 	var provider *v1alpha1.Provider
 	for _, p := range providers.Items {
@@ -103,12 +105,16 @@ func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Res
 
 	if provider == nil {
 		// We can't reconcile this _yet_ because there isn't a provider registered  - requeue the request with a bit of a buffer.
-		return reconcile.Result{Requeue: true, RequeueAfter: 30 * time.Second}, fmt.Errorf("no provider registered for kind: %s", request.Kind)
+		err = fmt.Errorf("no provider registered for kind: %s", request.Kind)
+		fmt.Println(err)
+		return reconcile.Result{Requeue: true, RequeueAfter: 30 * time.Second}, err
 	}
 
 	obj := NewCloudKind(request.GroupVersionKind)
 	err = r.Get(context.Background(), request.NamespacedName, obj)
 	if err != nil {
+		fmt.Println(err)
+
 		if apierrors.IsNotFound(err) {
 			return reconcile.Result{}, nil
 		}
@@ -128,18 +134,21 @@ func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Res
 	}
 	bodyJson, err := json.Marshal(evt)
 	if err != nil {
+		fmt.Println(err)
 		return reconcile.Result{Requeue: true}, err
 	}
 	body := bytes.NewReader(bodyJson)
 
 	response, err := http.DefaultClient.Post(provider.Spec.WebHook, "application/json", body)
 	if err != nil {
+		fmt.Println(err)
 		return reconcile.Result{}, err
 	}
 
 	defer response.Body.Close()
 	result, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		fmt.Println(err)
 		result = []byte("could not read response body")
 	}
 

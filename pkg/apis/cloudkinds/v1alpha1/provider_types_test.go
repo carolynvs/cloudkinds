@@ -34,7 +34,12 @@ func TestStorageProvider(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "foo",
 			Namespace: "default",
-		}}
+		},
+		Spec: ProviderSpec{
+			WebHook: "https://example.com",
+			Kinds:   []string{"CloudResource"},
+		},
+	}
 	g := gomega.NewGomegaWithT(t)
 
 	// Test Create

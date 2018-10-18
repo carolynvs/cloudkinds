@@ -1,11 +1,8 @@
 apiVersion: cloudkinds.k8s.io/v1alpha1
 kind: Provider
 metadata:
-  labels:
-    controller-tools.k8s.io: "1.0"
-  name: provider-sample
+  name: servicecatalog
 spec:
-  # Add fields here
-  webhook: https://example.com
+  webhook: http://ck-svc-cloudkinds-servicecatalog.default.svc.cluster.local:8080
   kinds:
     - CloudResource

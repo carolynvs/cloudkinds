@@ -7,12 +7,18 @@ rules:
 - apiGroups:
   - cloudkinds.k8s.io
   resources:
+  - providers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cloudkinds.k8s.io
+  resources:
   - cloudresources
   verbs:
   - get
   - list
   - watch
-  - create
   - update
   - patch
-  - delete

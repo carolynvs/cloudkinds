@@ -43,7 +43,9 @@ spec:
       containers:
       - command:
         - /root/manager
-        image: controller:latest
+        args:
+        - v=9
+        image: carolynvs/cloudkinds:latest
         name: manager
         resources:
           limits:
