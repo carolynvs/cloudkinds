@@ -1,6 +1,7 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= carolynvs/cloudkinds:latest
+IMG ?= carolynvs/cloudkinds
+TAG ?= latest
 
 all: test manager
 
@@ -24,7 +25,7 @@ install: manifests
 deploy: manifests docker-push
 	kubectl apply -f config/crds
 	kustomize build config/default | kubectl apply -f -
-	helm upgrade --install ck-svc charts/cloudkinds-servicecatalog
+	helm upgrade --install cloudkinds charts/cloudkinds --set sampleProvider.include=true
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
@@ -44,12 +45,14 @@ generate:
 
 # Build the docker image
 docker-build: test
-	docker build -t ${IMG} -f cmd/manager/Dockerfile .
-	docker build -t carolynvs/cloudkinds-servicecatalog -f cmd/servicecatalog/Dockerfile .
+	docker build -t ${IMG}:${TAG} -f cmd/manager/Dockerfile .
+	docker build -t ${IMG}-sampleprovider:${TAG} -f cmd/sampleprovider/Dockerfile .
+	docker build -t ${IMG}-servicecatalog:${TAG} -f cmd/servicecatalog/Dockerfile .
 	@echo "updating kustomize image patch file for manager resource"
 	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 # Push the docker image
 docker-push: docker-build
-	docker push ${IMG}
-	docker push carolynvs/cloudkinds-servicecatalog
+	docker push ${IMG}:${TAG}
+	docker push ${IMG}-sampleprovider:${TAG}
+	docker push ${IMG}-servicecatalog:${TAG}
