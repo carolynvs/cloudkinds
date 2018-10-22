@@ -22,10 +22,13 @@ install: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests docker-push
+deploy: docker-push
 	kubectl apply -f config/crds
 	kustomize build config/default | kubectl apply -f -
-	helm upgrade --install cloudkinds charts/cloudkinds --set sampleProvider.include=true
+	helm upgrade --install cloudkinds charts/cloudkinds \
+	 --recreate-pods --set sampleProvider.include=true,imagePullPolicy="Always",deploymentStrategy="Recreate"
+	helm upgrade --install cloudkinds-svcat charts/cloudkinds-servicecatalog \
+	  --recreate-pods --set imagePullPolicy="Always",deploymentStrategy="Recreate"
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
@@ -44,7 +47,7 @@ generate:
 	go generate ./pkg/... ./cmd/...
 
 # Build the docker image
-docker-build: test
+docker-build:
 	docker build -t ${IMG}:${TAG} -f cmd/manager/Dockerfile .
 	docker build -t ${IMG}-sampleprovider:${TAG} -f cmd/sampleprovider/Dockerfile .
 	docker build -t ${IMG}-servicecatalog:${TAG} -f cmd/servicecatalog/Dockerfile .

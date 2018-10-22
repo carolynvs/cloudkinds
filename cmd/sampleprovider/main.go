@@ -22,7 +22,7 @@ func main() {
 		}
 
 		fmt.Printf("\t%v\n", string(b))
-		fmt.Fprintf(w, "%v\n", string(b))
+		fmt.Fprintf(w, "%v", string(b))
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

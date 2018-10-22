@@ -1,0 +1,8 @@
+apiVersion: cloudkinds.k8s.io/v1alpha1
+kind: Provider
+metadata:
+  name: {{ include "cloudkinds-servicecatalog.fullname" . }}
+spec:
+  webhook: http://{{ include "cloudkinds-servicecatalog.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  kinds:
+  - CloudResource

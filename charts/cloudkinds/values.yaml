@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: carolynvs/cloudkinds
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
