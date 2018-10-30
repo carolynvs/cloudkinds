@@ -22,7 +22,7 @@ install: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: docker-push
+deploy:
 	kubectl apply -f config/crds
 	kustomize build config/default | kubectl apply -f -
 	helm upgrade --install cloudkinds charts/cloudkinds \
