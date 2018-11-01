@@ -25,7 +25,7 @@ import (
 	"net/http"
 	"time"
 
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/carolynvs/cloudkinds/pkg/providers"
 
 	"github.com/carolynvs/cloudkinds/pkg/apis/cloudkinds/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -91,11 +91,11 @@ type ReconcileCloudKind struct {
 func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	fmt.Println("farts are funny")
 	// Resolve a provider for this kind
-	providers := &v1alpha1.ProviderList{}
-	err := r.List(context.Background(), &client.ListOptions{Namespace: request.NamespacedName.Namespace}, providers)
+	availableProviders := &v1alpha1.ProviderList{}
+	err := r.List(context.Background(), &client.ListOptions{Namespace: request.NamespacedName.Namespace}, availableProviders)
 
 	var provider *v1alpha1.Provider
-	for _, p := range providers.Items {
+	for _, p := range availableProviders.Items {
 		for _, k := range p.Spec.Kinds {
 			if k == request.Kind {
 				provider = &p
@@ -124,12 +124,13 @@ func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Res
 	}
 
 	apiVersion, kind := request.ToAPIVersionAndKind()
-	evt := v1alpha1.ResourceEvent{
-		Action: v1alpha1.ResourceCreated, // TODO: Base the action on the status of the resource
-		Resource: v1alpha1.ResourceReference{
-			TypeMeta:  v1.TypeMeta{APIVersion: apiVersion, Kind: kind},
-			Namespace: request.NamespacedName.Namespace,
-			Name:      request.NamespacedName.Name,
+	evt := providers.ResourceEvent{
+		Action: providers.ResourceCreated, // TODO: Base the action on the status of the resource
+		Resource: providers.ResourceReference{
+			APIVersion: apiVersion,
+			Kind:       kind,
+			Namespace:  request.NamespacedName.Namespace,
+			Name:       request.NamespacedName.Name,
 		},
 	}
 	bodyJson, err := json.Marshal(evt)

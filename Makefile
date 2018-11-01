@@ -7,15 +7,15 @@ TAG ?= latest
 all: test build
 
 # Run tests
-test: generate fmt vet manifests
+test: build fmt vet
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
 
 # Build cloudkinds binary
-build: generate fmt vet
+build: generate
 	go build -o bin/cloudkinds github.com/carolynvs/cloudkinds/cmd/cloudkinds
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
-run: generate fmt vet
+run: generate
 	go run ./cmd/cloudkinds/main.go
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config

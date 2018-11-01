@@ -60,25 +60,6 @@ type ProviderList struct {
 	Items           []Provider `json:"items"`
 }
 
-type ResourceAction string
-
-const (
-	ResourceCreated ResourceAction = "create"
-	ResourceUpdated ResourceAction = "update"
-	ResourceDeleted ResourceAction = "delete"
-)
-
-type ResourceReference struct {
-	metav1.TypeMeta `json:",inline"`
-	Name            string `json:"name"`
-	Namespace       string `json:"namespace"`
-}
-
-type ResourceEvent struct {
-	Action   ResourceAction    `json:"action"`
-	Resource ResourceReference `json:"resource"`
-}
-
 func init() {
 	SchemeBuilder.Register(&Provider{}, &ProviderList{})
 }
