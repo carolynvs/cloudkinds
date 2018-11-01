@@ -4,28 +4,29 @@ REGISTRY ?= carolynvs/
 IMG ?= ${REGISTRY}cloudkinds
 TAG ?= latest
 
-all: test manager
+all: test build
 
 # Run tests
 test: generate fmt vet manifests
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
 
-# Build manager binary
-manager: generate fmt vet
-	go build -o bin/manager github.com/carolynvs/cloudkinds/cmd/manager
+# Build cloudkinds binary
+build: generate fmt vet
+	go build -o bin/cloudkinds github.com/carolynvs/cloudkinds/cmd/cloudkinds
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet
-	go run ./cmd/manager/main.go
+	go run ./cmd/cloudkinds/main.go
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy:
-	helm upgrade --install cloudkinds charts/cloudkinds \
+	helm upgrade --install cloudkinds --namespace cloudkinds charts/cloudkinds \
 	 --recreate-pods --set sampleProvider.include=true,imagePullPolicy="Always",deploymentStrategy="Recreate"
 
-# Generate manifests e.g. CRD, RBAC etc.
+# Generate kubebuilder manifests e.g. CRD, RBAC etc
 manifests:
 	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
+	@echo "Copy the changes from config/* to charts/*"
 
 # Run go fmt against code
 fmt:
@@ -41,10 +42,8 @@ generate:
 
 # Build the docker image
 docker-build:
-	docker build -t ${IMG}:${TAG} -f cmd/manager/Dockerfile .
+	docker build -t ${IMG}:${TAG} -f cmd/cloudkinds/Dockerfile .
 	docker build -t ${IMG}-sampleprovider:${TAG} -f cmd/sampleprovider/Dockerfile .
-	@echo "updating kustomize image patch file for manager resource"
-	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 # Push the docker image
 docker-push: docker-build

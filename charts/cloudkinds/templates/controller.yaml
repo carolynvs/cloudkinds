@@ -8,8 +8,7 @@ spec:
   ports:
     - port: 443
   selector:
-    control-plane: controller-manager
-    controller-tools.k8s.io: "1.0"
+    control-plane: cloudkinds-controller
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -29,7 +28,7 @@ spec:
         - args:
             - v=9
           command:
-            - /root/manager
+            - /root/cloudkinds
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           name: controller
           resources:
