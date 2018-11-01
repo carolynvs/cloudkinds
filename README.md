@@ -28,6 +28,26 @@ different providers:
 1. When the app is deployed in the on-premise test cluster, it uses the shared test database server.
 1. In production, it could use Amazon RDS, or Azure MySQL.
 
+# Try it out
+
+```console
+# Run the cloud kinds service on the current cluster
+$ TAG=alpha make deploy
+
+# Tail the logs for a sample cloud kinds provider that just echos back webhook payloads
+$ kubectl logs deploy/cloudkinds-sampleprovider -f&
+I am a sample CloudKinds provider that does absolutely nothing useful! ☁️🌈
+Listening on *:8080
+
+# Create a new cloudkinds resource
+$ kubectl apply -f hack/samples/sample.yaml
+cloudresource.cloudkinds.k8s.io/sample created
+Handled /
+	{"action":"create","resource":{"kind":"CloudResource","apiVersion":"cloudkinds.k8s.io/v1alpha1","name":"sample","namespace":"cloudkinds"}}
+```
+
+This isn't terribly exciting (yet), but it shows that we can watch for arbitrary CRDs and call the provider's webhook.
+
 # Implementation Notes
 
 * Uses kubebuilder and takes advantage of the untyped client so that we can watch for any resource dynamically.
