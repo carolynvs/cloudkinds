@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudkinds-controller
+  labels:
+    control-plane: cloudkinds-controller
+spec:
+  ports:
+    - port: 443
+  selector:
+    control-plane: controller-manager
+    controller-tools.k8s.io: "1.0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudkinds-controller
+spec:
+  selector:
+    matchLabels:
+      control-plane: cloudkinds-controller
+  serviceName: cloudkinds-controller
+  template:
+    metadata:
+      labels:
+        control-plane: cloudkinds-controller
+    spec:
+      containers:
+        - args:
+            - v=9
+          command:
+            - /root/manager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          name: controller
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{- with .Values.nodeSelector }}
+    nodeSelector:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+    affinity:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Values.tolerations }}
+    tolerations:
+{{ toYaml . | indent 8 }}
+{{- end }}
