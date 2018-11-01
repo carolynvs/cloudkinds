@@ -1,8 +1,0 @@
-apiVersion: cloudkinds.k8s.io/v1alpha1
-kind: Provider
-metadata:
-  name: sample
-spec:
-  webhook: http://cloudkinds-sampleprovider.default.svc.cluster.local
-  kinds:
-    - CloudResource

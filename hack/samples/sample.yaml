@@ -1,0 +1,6 @@
+apiVersion: cloudkinds.k8s.io/v1alpha1
+kind: CloudResource
+metadata:
+  name: sample
+spec:
+  foo: bar
