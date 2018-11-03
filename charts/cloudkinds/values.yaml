@@ -17,7 +17,7 @@ service:
   port: 80
 
 sampleProvider:
-  include: true
+  include: false
   image:
     repository: carolynvs/cloudkinds-sampleprovider
     tag: latest
