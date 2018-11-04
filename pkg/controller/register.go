@@ -18,9 +18,11 @@ package controller
 
 import (
 	"github.com/carolynvs/cloudkinds/pkg/controller/cloudkinds"
+	"github.com/carolynvs/cloudkinds/pkg/controller/cloudproviders"
 )
 
 func init() {
 	// AddToManagerFuncs is a list of functions to create controllers and add them to a manager.
 	AddToManagerFuncs = append(AddToManagerFuncs, cloudkinds.Add)
+	AddToManagerFuncs = append(AddToManagerFuncs, cloudproviders.Add)
 }

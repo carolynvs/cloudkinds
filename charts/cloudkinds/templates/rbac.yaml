@@ -6,27 +6,26 @@ rules:
 - apiGroups:
   - cloudkinds.k8s.io
   resources:
-  - providers
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cloudkinds.k8s.io
-  resources:
-  - cloudresources
-  - mysqls
+  - "*"
   verbs:
   - get
   - list
   - watch
   - update
   - patch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  creationTimestamp: null
   name: cloudkinds-controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io

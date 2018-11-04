@@ -34,15 +34,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Create a new Cmd to provide shared dependencies and start components
+	// Create a new manager to provide shared dependencies and start components
 	mgr, err := manager.New(cfg, manager.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Registering Components.")
+	log.Printf("Registering controllers")
 
-	// Setup Scheme for all resources
+	// Register schemes
 	if err := apis.AddToScheme(mgr.GetScheme()); err != nil {
 		log.Fatal(err)
 	}
@@ -52,8 +52,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Starting the Cmd.")
-
-	// Start the Cmd
+	log.Printf("Starting controllers")
 	log.Fatal(mgr.Start(signals.SetupSignalHandler()))
 }

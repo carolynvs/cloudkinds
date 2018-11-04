@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/carolynvs/cloudkinds/pkg/providers"
+	apiextensionclient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 
 	"github.com/carolynvs/cloudkinds/pkg/apis/cloudkinds/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -58,12 +59,22 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
+	crdClient, err := apiextensionclient.NewForConfig(mgr.GetConfig())
+	if err != nil {
+		return err
+	}
+
 	// Watch for changes to any registered cloudkind
+	// TODO: List this from registered CRDs, and flags
 	kinds := []schema.GroupVersionKind{
 		v1alpha1.SchemeGroupVersion.WithKind("CloudResource"),
 		v1alpha1.SchemeGroupVersion.WithKind("MySQL"),
 	}
 	for _, kind := range kinds {
+		err := RegisterCloudKind(crdClient, kind.Kind)
+		if err != nil {
+			return err
+		}
 		cloudKind := NewCloudKind(kind)
 		err = c.Watch(&source.Kind{Type: cloudKind}, &handler.EnqueueRequestForObject{})
 		if err != nil {
@@ -82,20 +93,15 @@ type ReconcileCloudKind struct {
 	scheme *runtime.Scheme
 }
 
-// Reconcile reads that state of the cluster for a CloudResource object and makes changes based on the state read
-// and what is in the CloudResource.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
-// a Deployment as an example
+// Reconcile handles changes to a CloudKind, passing it along to a CloudProvider.
 // Automatically generate RBAC rules to allow the Controller to read and write Deployments
 // +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=providers,verbs=get;list;watch
-// +kubebuilder:rbac:groups=cloudkinds.k8s.io,resources=cloudresources,verbs=get;list;watch;update;patch
 func (r *ReconcileCloudKind) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	fmt.Println("farts are funny")
 	// Resolve a provider for this kind
-	availableProviders := &v1alpha1.ProviderList{}
+	availableProviders := &v1alpha1.CloudProviderList{}
 	err := r.List(context.Background(), &client.ListOptions{Namespace: request.NamespacedName.Namespace}, availableProviders)
 
-	var provider *v1alpha1.Provider
+	var provider *v1alpha1.CloudProvider
 	for _, p := range availableProviders.Items {
 		for _, k := range p.Spec.Kinds {
 			if k == request.Kind {

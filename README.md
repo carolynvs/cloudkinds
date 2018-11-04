@@ -96,3 +96,12 @@ This isn't terribly exciting (yet), but it shows that we can watch for arbitrary
 ## Delete Cloud Resource Workflow
 1. User deletes the cloud resource
 1. Our finalizer handles calling the adapter's webhook to pass along the delete request.
+
+---
+
+UX
+
+1. install cloudkinds and specify a comma separated list of kinds to initialize as CRDs
+  * this lets you create instances of a CRD before a provider that handles it is registered
+1. watch providers and initialize any new kinds that are listed on a provider
+  * this lets something like service catalog dynamically register more types as the catalog is updated

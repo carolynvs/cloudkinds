@@ -20,8 +20,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// ProviderSpec defines the desired state of Provider
-type ProviderSpec struct {
+// CloudProviderSpec defines the desired state of CloudProvider
+type CloudProviderSpec struct {
 	// WebHook is the URL to call when a resource should be acted upon by the provider.
 	WebHook string `json:"webhook"`
 
@@ -32,8 +32,8 @@ type ProviderSpec struct {
 	Kinds []string `json:"kinds"`
 }
 
-// ProviderStatus defines the observed state of Provider
-type ProviderStatus struct {
+// CloudProviderStatus defines the observed state of CloudProvider
+type CloudProviderStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,25 +41,25 @@ type ProviderStatus struct {
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// Provider is the Schema for the providers API
+// CloudProvider is the Schema for the providers API
 // +k8s:openapi-gen=true
-type Provider struct {
+type CloudProvider struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ProviderSpec   `json:"spec,omitempty"`
-	Status ProviderStatus `json:"status,omitempty"`
+	Spec   CloudProviderSpec   `json:"spec,omitempty"`
+	Status CloudProviderStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// ProviderList contains a list of Provider
-type ProviderList struct {
+// CloudProviderList contains a list of CloudProvider
+type CloudProviderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Provider `json:"items"`
+	Items           []CloudProvider `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Provider{}, &ProviderList{})
+	SchemeBuilder.Register(&CloudProvider{}, &CloudProviderList{})
 }
