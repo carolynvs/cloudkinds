@@ -21,7 +21,7 @@ run: generate
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy:
 	helm upgrade --install cloudkinds --namespace cloudkinds charts/cloudkinds \
-	 --recreate-pods --set sampleProvider.include=false \
+	 --recreate-pods --set sampleProvider.include=true \
 	 --set image.registry="${IMG}",image.tag="${TAG}" \
 	 --set imagePullPolicy="Always",deploymentStrategy="Recreate"
 
