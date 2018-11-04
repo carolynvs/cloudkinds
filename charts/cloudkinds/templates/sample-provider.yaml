@@ -71,6 +71,5 @@ metadata:
   name: sampleprovider
 spec:
   webhook: http://{{ include "cloudkinds.fullname" . }}-sampleprovider.{{ .Release.Namespace }}.svc.cluster.local
-  kinds:
-  - CloudResource
+  kinds: []
 {{ end }}

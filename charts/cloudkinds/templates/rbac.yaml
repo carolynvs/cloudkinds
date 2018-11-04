@@ -15,6 +15,7 @@ rules:
   - cloudkinds.k8s.io
   resources:
   - cloudresources
+  - mysqls
   verbs:
   - get
   - list

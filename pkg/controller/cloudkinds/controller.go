@@ -61,6 +61,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Watch for changes to any registered cloudkind
 	kinds := []schema.GroupVersionKind{
 		v1alpha1.SchemeGroupVersion.WithKind("CloudResource"),
+		v1alpha1.SchemeGroupVersion.WithKind("MySQL"),
 	}
 	for _, kind := range kinds {
 		cloudKind := NewCloudKind(kind)
